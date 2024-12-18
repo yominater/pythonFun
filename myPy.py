@@ -66,7 +66,6 @@ class Game: ### Game Class ###
         self.gameState -= 1
         self.boards.pop(self.gameState)
         self.gameState -= 1
-        self.plrMove(plrId)
     def plrMove(self, plrId):
         plr_input = None
         if plrId == 0:
@@ -76,33 +75,43 @@ class Game: ### Game Class ###
         while True:
             try:
                 plr_input = input(f"Enter your move 1-9, or undo with 'u' player {plrName}:")
-                if plr_input == 'u': # undo with player input
-                    if self.gameState < 3: 
-                        self.print()
-                        print("It's too soon in the game for that!") 
-                    else:
-                        if plrId == 0:
-                            if game.xUsedUndo == True: print("You've already used your undo!")
-                            else:
-                                self.undo(plrId)
-                                self.xUsedUndo = True
-                                break;
-                        if plrId == 1:
-                            if game.yUsedUndo == True: print("You've already used your undo!")
-                            else:
-                                self.undo(plrId)
-                                self.yUsedUndo = True
-                                break;
-                # End undo code #
-                elif 1 <= int(plr_input) <= 9 and self.isEmpty(int(plr_input)):
+                if plr_input == 'u':
+                    raise ValueError
+                if 1 <= int(plr_input) <= 9 and self.isEmpty(int(plr_input)):
                     plr_input = int(plr_input)
                     break # pass thorugh the while loop to setting a new board  
                 else: 
                     self.print()
                     print("Please enter an integer 1-9 for a space which hasn't been picked")
             except ValueError:
-                self.print()
-                print("Please enter an integer 1-9 for a space which hasn't been picked. error")
+                if plr_input == 'u': # undo with player input
+                    if self.gameState < 3: 
+                        self.print()
+                        print("It's too soon in the game for that!") 
+                    else:
+                        if plrId == 0:
+                            if game.xUsedUndo == True: 
+                                self.print()
+                                print("You've already used your undo!")
+                            else:
+                                self.undo(plrId)
+                                self.xUsedUndo = True
+                                self.print()
+                                print("Move has been reversed")
+
+                        if plrId == 1:
+                            if game.yUsedUndo == True: 
+                                self.print()
+                                print("You've already used your undo!")
+                            else:
+                                self.undo(plrId)
+                                self.yUsedUndo = True
+                                self.print()
+                                print("Move has been reversed")
+                else:                
+                    # End undo code #
+                    self.print()
+                    print("Please enter an integer 1-9 for a space which hasn't been picked. error")
         self.newBoard(plrId, plr_input)
         if plrId == 0:
             game.setBlock(0, plr_input)
@@ -112,11 +121,7 @@ class Game: ### Game Class ###
             self.print()
             sys.exit()
 
-
-
-
 # Start of running code
-
 game = Game()
 for i in range(11):
     player = i % 2 # Alternates between 0 and 1
